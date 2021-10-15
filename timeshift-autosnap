@@ -35,7 +35,7 @@ fi
 
 readonly SNAPSHOT_DESCRIPTION=$(get_property "snapshotDescription" "string" "{timeshift-autosnap} {created before upgrade}")
 
-timeshift --create --comments "$SNAPSHOT_DESCRIPTION" || { echo "Unable to run timeshift-autosnap! Please close Timeshift and try again. Script will now exit..." >&2; exit 1; }
+timeshift --create --comments "$SNAPSHOT_DESCRIPTION${1:+ "$1"}" || { echo "Unable to run timeshift-autosnap! Please close Timeshift and try again. Script will now exit..." >&2; exit 1; }
 
 if $(get_property "deleteSnapshots" "boolean" "true") ; then
     timeshift --list > "$SNAPSHOTS_TO_DELETE"
@@ -53,8 +53,9 @@ if $(get_property "deleteSnapshots" "boolean" "true") ; then
     fi
 fi;
 
-if $(get_property "updateGrub" "boolean" "true") && [ "$(pacman -Qs ^grub-btrfs$)" ]; then
-    grub-mkconfig -o /boot/grub/grub.cfg
+if $(get_property "updateGrub" "boolean" "true") && [ -f /etc/grub.d/41_snapshots-btrfs ]; then
+    . /etc/default/grub-btrfs/config
+    if [ -s "${GRUB_BTRFS_GRUB_DIRNAME:-/boot/grub}/grub-btrfs.cfg" ]; then /etc/grub.d/41_snapshots-btrfs; else ${GRUB_BTRFS_MKCONFIG:-grub-mkconfig} -o ${GRUB_BTRFS_GRUB_DIRNAME:-/boot/grub}/grub.cfg; fi 
 fi;
 
 exit 0
