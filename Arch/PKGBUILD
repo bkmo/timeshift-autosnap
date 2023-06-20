@@ -1,7 +1,7 @@
 # Maintainer: gobonja <gobonja@gmail.com>
 
-pkgname=timeshift-autosnap
-pkgver=1.0
+pkgname=timeshift-autosnap-bkmo
+pkgver=1.0.2
 pkgrel=1
 pkgdesc="Timeshift auto-snapshot script which runs before package upgrade using Pacman hook."
 arch=("any")
@@ -9,6 +9,7 @@ url="https://github.com/bkmo/${pkgname}"
 license=('MIT')
 depends=('timeshift')
 optdepends=('grub-btrfs')
+conflicts=('timeshift-autosnap')
 source=("${pkgname}-${pkgver}.tar.gz::${url}/archive/${pkgver}.tar.gz")
 b2sums=('SKIP')
 backup=('etc/timeshift-autosnap.conf')
